@@ -10,6 +10,33 @@
 #include "StringWriter.hpp"
 
 namespace ArduinoJson {
+
+class JsonError {
+ public:
+  enum Code {
+    Ok,
+    MissingBrace,
+    MissingBracket,
+    MissingColon,
+    MissingComma,
+    TooDeep,
+    NoMemory
+  };
+
+  JsonError(Code code) : _code(code) {}
+
+  operator Code() const {
+    return _code;
+  }
+
+  operator bool() const {
+    return _code == Ok;
+  }
+
+ private:
+  Code _code;
+};
+
 namespace Internals {
 
 // Parse JSON string to create JsonArrays and JsonObjects
@@ -24,9 +51,9 @@ class JsonParser {
         _reader(reader),
         _writer(writer),
         _nestingLimit(nestingLimit) {}
-  bool parse(JsonArray &destination);
-  bool parse(JsonObject &destination);
-  bool parse(JsonVariant &destination);
+  JsonError parse(JsonArray &destination);
+  JsonError parse(JsonObject &destination);
+  JsonError parse(JsonVariant &destination);
 
  private:
   JsonParser &operator=(const JsonParser &);  // non-copiable
@@ -37,12 +64,12 @@ class JsonParser {
   }
 
   const char *parseString();
-  bool parseAnythingTo(JsonVariant *destination);
-  FORCE_INLINE bool parseAnythingToUnsafe(JsonVariant *destination);
+  JsonError parseAnythingTo(JsonVariant *destination);
+  FORCE_INLINE JsonError parseAnythingToUnsafe(JsonVariant *destination);
 
-  inline bool parseArrayTo(JsonVariant *destination);
-  inline bool parseObjectTo(JsonVariant *destination);
-  inline bool parseStringTo(JsonVariant *destination);
+  inline JsonError parseArrayTo(JsonVariant *destination);
+  inline JsonError parseObjectTo(JsonVariant *destination);
+  inline JsonError parseStringTo(JsonVariant *destination);
 
   static inline bool isBetween(char c, char min, char max) {
     return min <= c && c <= max;
