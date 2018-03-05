@@ -5,38 +5,12 @@
 #pragma once
 
 #include "../JsonBuffer.hpp"
+#include "../JsonError.hpp"
 #include "../JsonVariant.hpp"
 #include "../TypeTraits/IsConst.hpp"
 #include "StringWriter.hpp"
 
 namespace ArduinoJson {
-
-class JsonError {
- public:
-  enum Code {
-    Ok,
-    MissingBrace,
-    MissingBracket,
-    MissingColon,
-    MissingComma,
-    TooDeep,
-    NoMemory
-  };
-
-  JsonError(Code code) : _code(code) {}
-
-  operator Code() const {
-    return _code;
-  }
-
-  operator bool() const {
-    return _code == Ok;
-  }
-
- private:
-  Code _code;
-};
-
 namespace Internals {
 
 // Parse JSON string to create JsonArrays and JsonObjects
