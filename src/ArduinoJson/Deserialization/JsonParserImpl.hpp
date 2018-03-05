@@ -72,7 +72,7 @@ inline ArduinoJson::JsonError
 ArduinoJson::Internals::JsonParser<TReader, TWriter>::parse(
     JsonObject &object) {
   // Check opening brace
-  if (!eat('{')) return JsonError::MissingBrace;
+  if (!eat('{')) return JsonError::OpeningBraceExpected;
   if (eat('}')) return JsonError::Ok;
 
   // Read each key value pair
@@ -80,7 +80,7 @@ ArduinoJson::Internals::JsonParser<TReader, TWriter>::parse(
     // 1 - Parse key
     const char *key = parseString();
     if (!key) return JsonError::NoMemory;
-    if (!eat(':')) return JsonError::MissingColon;
+    if (!eat(':')) return JsonError::ColonExpected;
 
     // 2 - Parse value
     JsonVariant value;
@@ -90,7 +90,7 @@ ArduinoJson::Internals::JsonParser<TReader, TWriter>::parse(
 
     // 3 - More keys/values?
     if (eat('}')) return JsonError::Ok;
-    if (!eat(',')) return JsonError::MissingComma;
+    if (!eat(',')) return JsonError::ClosingBraceExpected;
   }
 }
 

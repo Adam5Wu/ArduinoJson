@@ -10,9 +10,10 @@ class JsonError {
  public:
   enum Code {
     Ok,
-    MissingBrace,
+    OpeningBraceExpected,
+    ClosingBraceExpected,
     MissingBracket,
-    MissingColon,
+    ColonExpected,
     MissingComma,
     TooDeep,
     NoMemory
@@ -25,15 +26,21 @@ class JsonError {
   }
 
   const char* c_str() const {
-    switch (_code) {
+    return to_string(_code);
+  }
+
+  friend const char* to_string(JsonError::Code code) {
+    switch (code) {
       case Ok:
         return "Ok";
-      case MissingBrace:
-        return "MissingBrace";
+      case OpeningBraceExpected:
+        return "OpeningBraceExpected";
+      case ClosingBraceExpected:
+        return "ClosingBraceExpected";
       case MissingBracket:
         return "MissingBracket";
-      case MissingColon:
-        return "MissingColon";
+      case ColonExpected:
+        return "ColonExpected";
       case MissingComma:
         return "MissingComma";
       case TooDeep:
@@ -51,7 +58,12 @@ class JsonError {
 
 #if ARDUINOJSON_ENABLE_STD_STREAM
 inline std::ostream& operator<<(std::ostream& s, const JsonError& e) {
-  s << e.c_str();
+  s << to_string(e);
+  return s;
+}
+
+inline std::ostream& operator<<(std::ostream& s, JsonError::Code e) {
+  s << to_string(e);
   return s;
 }
 #endif

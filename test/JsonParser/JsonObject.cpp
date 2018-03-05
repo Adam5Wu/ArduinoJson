@@ -166,32 +166,32 @@ TEST_CASE("deserializeJson(JsonObject&)") {
   SECTION("Misc") {
     SECTION("The opening brace is missing") {
       JsonError err = deserializeJson(obj, "}");
-      REQUIRE(err != JsonError::Ok);
+      REQUIRE(err == JsonError::OpeningBraceExpected);
     }
 
     SECTION("The closing brace is missing") {
-      JsonError err = deserializeJson(obj, "{");
-      REQUIRE(err != JsonError::Ok);
+      JsonError err = deserializeJson(obj, "{\"hello\":\"world\"");
+      REQUIRE(err == JsonError::ClosingBraceExpected);
     }
 
     SECTION("A quoted key without value") {
       JsonError err = deserializeJson(obj, "{\"key\"}");
-      REQUIRE(err != JsonError::Ok);
+      REQUIRE(err == JsonError::ColonExpected);
     }
 
     SECTION("A non-quoted key without value") {
       JsonError err = deserializeJson(obj, "{key}");
-      REQUIRE(err != JsonError::Ok);
+      REQUIRE(err == JsonError::ColonExpected);
     }
 
     SECTION("A dangling comma") {
       JsonError err = deserializeJson(obj, "{\"key1\":\"value1\",}");
-      REQUIRE(err != JsonError::Ok);
+      REQUIRE(err == JsonError::ColonExpected);
     }
 
     SECTION("null as a key") {
-      JsonError err = deserializeJson(obj, "null:\"value\"}");
-      REQUIRE(err != JsonError::Ok);
+      JsonError err = deserializeJson(obj, "{null:\"value\"}");
+      REQUIRE(err == JsonError::Ok);
     }
   }
 }
