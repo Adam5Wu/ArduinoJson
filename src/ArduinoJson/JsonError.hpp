@@ -24,10 +24,6 @@ class JsonError {
     return _code;
   }
 
-  operator bool() const {
-    return _code == Ok;
-  }
-
   const char* c_str() const {
     switch (_code) {
       case Ok:
