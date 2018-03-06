@@ -21,12 +21,20 @@ class JsonError {
 
   JsonError(Code code) : _code(code) {}
 
-  operator Code() const {
-    return _code;
+  operator==(Code code) const {
+    return _code == code;
+  }
+
+  operator bool() const {
+    return _code != Ok;
   }
 
   const char* c_str() const {
     return to_string(_code);
+  }
+
+  friend const char* to_string(const JsonError err) {
+    return to_string(err._code);
   }
 
   friend const char* to_string(JsonError::Code code) {
