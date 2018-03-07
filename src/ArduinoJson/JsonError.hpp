@@ -21,7 +21,7 @@ class JsonError {
 
   JsonError(Code code) : _code(code) {}
 
-  operator==(Code code) const {
+  bool operator==(Code code) const {
     return _code == code;
   }
 
