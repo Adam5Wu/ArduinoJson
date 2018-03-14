@@ -47,12 +47,8 @@ class DynamicJsonBufferBase
  public:
   enum { EmptyBlockSize = sizeof(EmptyBlock) };
 
-  DynamicJsonBufferBase(size_t initialSize = 256)
-      : _head(NULL), _nextBlockCapacity(initialSize) {}
-
-  DynamicJsonBufferBase(TAllocator && allocator, size_t initialSize = 256)
-      : _head(NULL), _nextBlockCapacity(initialSize)
-      , _allocator(std::move(allocator))  {}
+  DynamicJsonBufferBase(TAllocator & allocator, size_t initialSize)
+      : _allocator(allocator), _head(NULL), _nextBlockCapacity(initialSize) {}
 
   ~DynamicJsonBufferBase() {
     clear();
@@ -153,7 +149,7 @@ class DynamicJsonBufferBase
     return true;
   }
 
-  TAllocator _allocator;
+  TAllocator &_allocator;
   Block* _head;
   size_t _nextBlockCapacity;
 };
@@ -170,6 +166,11 @@ class DynamicJsonBufferBase
 // Implements a JsonBuffer with dynamic memory allocation.
 // You are strongly encouraged to consider using StaticJsonBuffer which is much
 // more suitable for embedded systems.
-typedef Internals::DynamicJsonBufferBase<Internals::DefaultAllocator>
-    DynamicJsonBuffer;
+extern Internals::DefaultAllocator defaultAllocator;
+class DynamicJsonBuffer
+    : public Internals::DynamicJsonBufferBase<Internals::DefaultAllocator> {
+  public:
+    DynamicJsonBuffer(size_t initialSize = 256)
+        : DynamicJsonBufferBase(defaultAllocator, initialSize) {}
+};
 }
